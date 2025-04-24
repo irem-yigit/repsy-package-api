@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Service
+
 public class FileSystemStorageService implements StorageService{
 
     private final Path baseDir;

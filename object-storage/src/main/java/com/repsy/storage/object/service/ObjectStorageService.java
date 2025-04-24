@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 
-@Service
+
 public class ObjectStorageService implements StorageService {
 
     private final MinioClient minioClient;
