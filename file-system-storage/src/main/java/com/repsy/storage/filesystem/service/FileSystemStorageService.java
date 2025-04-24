@@ -1,7 +1,7 @@
 package com.repsy.storage.filesystem.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import com.repsy.service.StorageService;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ public class FileSystemStorageService implements StorageService{
 
     private final Path baseDir;
 
-    public FileSystemStorageService(@Value("${app.storage.base-dir}") String baseDir) {
+    public FileSystemStorageService(String baseDir) {
         this.baseDir = Paths.get(baseDir).toAbsolutePath().normalize();
     }
 

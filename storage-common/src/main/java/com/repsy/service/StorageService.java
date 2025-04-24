@@ -1,4 +1,4 @@
-package com.repsy.storage.filesystem.service;
+package com.repsy.service;
 
 public interface StorageService {
 

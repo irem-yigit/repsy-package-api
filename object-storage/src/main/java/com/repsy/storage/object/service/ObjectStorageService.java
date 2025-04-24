@@ -1,11 +1,10 @@
 package com.repsy.storage.object.service;
 
-import com.repsy.storage.filesystem.service.StorageService;
+import com.repsy.service.StorageService;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 

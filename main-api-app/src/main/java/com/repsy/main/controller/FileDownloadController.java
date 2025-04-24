@@ -1,6 +1,6 @@
 package com.repsy.main.controller;
 
-import com.repsy.storage.filesystem.service.StorageService;
+import com.repsy.service.StorageService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

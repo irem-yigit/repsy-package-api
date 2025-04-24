@@ -13,6 +13,7 @@
         <module>main-api-app</module>
         <module>file-system-storage</module>
         <module>object-storage</module>
+        <module>storage-common</module>
     </modules>
 
     <dependencyManagement>
