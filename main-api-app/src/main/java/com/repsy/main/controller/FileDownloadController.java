@@ -1,6 +1,7 @@
 package com.repsy.main.controller;
 
 import com.repsy.service.StorageService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class FileDownloadController {
 
     private final StorageService storageService;
 
-    public FileDownloadController(StorageService storageService) {
+    public FileDownloadController(@Qualifier("storageService")StorageService storageService) {
         this.storageService = storageService;
     }
 

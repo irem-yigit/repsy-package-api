@@ -1,6 +1,7 @@
 package com.repsy.main.controller;
 
 import com.repsy.service.StorageService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +12,7 @@ public class FileUploadController {
 
     private final StorageService storageService;
 
-    public FileUploadController(StorageService storageService) {
+    public FileUploadController(@Qualifier("storageService") StorageService storageService) {
         this.storageService = storageService;
     }
 

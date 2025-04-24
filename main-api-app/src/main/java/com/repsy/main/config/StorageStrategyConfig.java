@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class StorageStrategyConfig {
 
+    @Value("${storage.strategy}")
+    private String strategy;
+
     @Value("${storage.file.baseDir}")
     private String fileBaseDir;
 
@@ -31,10 +34,10 @@ public class StorageStrategyConfig {
     @Bean
     public StorageService storageService(FileSystemStorageService fileService,
                                          ObjectStorageService objectService) {
-        return switch (fileBaseDir.toLowerCase()) {
+        return switch (strategy.toLowerCase()) {
             case "file" -> fileService;
             case "object" -> objectService;
-            default -> throw new IllegalArgumentException("Desteklenmeyen strategy: " + fileBaseDir);
+            default -> throw new IllegalArgumentException("Desteklenmeyen strategy: " + strategy);
         };
     }
 }
