@@ -3,6 +3,7 @@ package com.repsy.main.controller;
 import com.repsy.main.entity.FileMetadata;
 import com.repsy.main.service.FileMetadataService;
 import com.repsy.service.StorageService;
+import io.minio.errors.MinioException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +22,8 @@ public class FileUploadController {
     private final StorageService storageService;
     private final FileMetadataService fileMetadataService;
 
-    public FileUploadController(@Qualifier("storageService") StorageService storageService, FileMetadataService fileMetadataService) {
+    public FileUploadController(@Qualifier("storageService") StorageService storageService,
+                                FileMetadataService fileMetadataService) {
         this.storageService = storageService;
         this.fileMetadataService = fileMetadataService;
     }
@@ -28,42 +31,33 @@ public class FileUploadController {
     @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
+            // Dosya ismini ve yolu almak
             String fileName = file.getOriginalFilename();
-            String storagePath = "files/" + fileName;
-            byte[] data = file.getBytes();
+            String storagePath = "files/" + fileName;    // Bu path, MinIO için bucket içinde dosya yolunu ifade eder
+            byte[] data = file.getBytes();      // Dosyanın verilerini byte[] olarak alıyoruz
 
+            // Dosyayı storage'a kaydetme (MinIO veya lokal dosya sistemi)
             storageService.save(storagePath, data);
 
-            FileMetadata metadata = new FileMetadata(fileName, storagePath, file.getSize());
-            fileMetadataService.save(metadata);
+            // Checksum hesapla
+            String checksum = fileMetadataService.calculateChecksum(file);
 
+            // FileMetadata objesini oluşturup veritabanına kaydetme
+            FileMetadata metadata = new FileMetadata(fileName, storagePath, file.getSize(), file.getContentType(), checksum);
+            fileMetadataService.saveFileMetadata(file);
             return ResponseEntity.ok("Dosya başarıyla yüklendi ve metadata kaydedildi: " + fileName);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Dosya yükleme başarısız: " + e.getMessage());
+        } catch (MinioException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<FileMetadata>> getAllFiles() {
-        return ResponseEntity.ok(fileMetadataService.findAll());
+        return ResponseEntity.ok(fileMetadataService.getAllFileMetadata());
     }
 
-    /*@GetMapping("/{id}")
-    public ResponseEntity<?> getFileMetadata(@PathVariable Long id) {
-        Optional<FileMetadata> metadata = Optional.ofNullable(fileMetadataService.findById(id));
-        return metadata.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Metadata bulunamadı"));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMetadata(@PathVariable Long id) {
-        if (fileMetadataService.existsById(id)) {
-            fileMetadataService.deleteById(id);
-            return ResponseEntity.ok("Metadata başarıyla silindi.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Metadata bulunamadı");
-        }
-    }*/
 
 }

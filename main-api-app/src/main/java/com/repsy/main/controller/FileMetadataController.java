@@ -1,10 +1,13 @@
 package com.repsy.main.controller;
 
 import com.repsy.main.entity.FileMetadata;
-import com.repsy.main.repository.FileMetadataRepository;
+import com.repsy.main.service.FileMetadataService;
+import io.minio.errors.MinioException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,37 +15,42 @@ import java.util.Optional;
 @RequestMapping("/files")
 public class FileMetadataController {
 
-    private final FileMetadataRepository repository;
+    private final FileMetadataService fileMetadataService;
 
-    public FileMetadataController(FileMetadataRepository repository) {
-        this.repository = repository;
+    public FileMetadataController(FileMetadataService fileMetadataService) {
+        this.fileMetadataService = fileMetadataService;
     }
 
-    // 1️⃣ Tüm dosyaları getir
+    // Tüm dosyaları getir
     @GetMapping
     public List<FileMetadata> getAllFiles() {
-        return repository.findAll();
+        return fileMetadataService.getAllFileMetadata();
     }
 
-    // 2️⃣ Belirli ID ile dosya getir
+    // Belirli ID ile dosya getir
     @GetMapping("/{id}")
     public ResponseEntity<FileMetadata> getFileById(@PathVariable Long id) {
-        Optional<FileMetadata> file = repository.findById(id);
+        Optional<FileMetadata> file = Optional.ofNullable(fileMetadataService.getFileMetadataById(id));
         return file.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // 3️⃣ Yeni dosya kaydet
-    @PostMapping
-    public FileMetadata saveFile(@RequestBody FileMetadata fileMetadata) {
-        return repository.save(fileMetadata);
+    // Yeni dosya kaydet
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        try {
+            // Dosya yükleme ve metadata bilgilerini kaydetme
+            fileMetadataService.saveFileMetadata(file);
+            return ResponseEntity.ok("File uploaded successfully");
+        } catch (IOException | MinioException e) {
+            return ResponseEntity.status(500).body("Failed to upload file");
+        }
     }
 
-    // 4️⃣ Silme işlemi
+    // Silme işlemi
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFile(@PathVariable Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (fileMetadataService.deleteFileMetadata(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

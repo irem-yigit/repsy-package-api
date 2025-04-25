@@ -20,16 +20,19 @@ public class FileMetadata {
     private String storagePath;
     private long size;
     private LocalDateTime uploadTime;
+    private String fileType;
+    private String checksum;
 
-    // Constructors
     public FileMetadata() {
     }
 
-    public FileMetadata(String fileName, String storagePath, long size) {
+    public FileMetadata(String fileName, String storagePath, long size, String fileType, String checksum) {
         this.fileName = fileName;
         this.storagePath = storagePath;
         this.size = size;
         this.uploadTime = LocalDateTime.now();
+        this.fileType = fileType;
+        this.checksum = checksum;
     }
 
 }

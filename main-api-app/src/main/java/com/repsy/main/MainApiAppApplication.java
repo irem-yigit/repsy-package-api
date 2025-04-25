@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 		"com.repsy.main",
 		"com.repsy.storage.filesystem.service",
 		"com.repsy.storage.object"
-})  //storageservice bir interface olduğu için bean tanımlayamıyordum. Bu durumda, FileUploadControllerda storageservice beani problem çıkarıyordu. ComponentScan ile paket ekleyince çözüldü.
+})
 public class MainApiAppApplication {
 
 	public static void main(String[] args) {

@@ -14,6 +14,7 @@ public class ObjectStorageService implements StorageService {
     private final MinioClient minioClient;
     private final String bucketName;
 
+    // Constructor üzerinden MinIO'ya bağlanacak bilgileri alıyoruz.
     public ObjectStorageService(
             @Value("${minio.endpoint}") String endpoint,
             @Value("${minio.accessKey}") String accessKey,
@@ -30,12 +31,13 @@ public class ObjectStorageService implements StorageService {
     @Override
     public void save(String path, byte[] data) {
         try {
+            // MinIO'ya dosya kaydediyoruz
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(path)
-                            .stream(new ByteArrayInputStream(data), data.length, -1)
-                            .contentType("application/octet-stream")
+                            .object(path)       // Dosya adı/path
+                            .stream(new ByteArrayInputStream(data), data.length, -1) // Veriyi byte array olarak aktarıyoruz
+                            .contentType("application/octet-stream")    // İçerik tipi (genellikle binary)
                             .build()
             );
         } catch (Exception e) {
@@ -48,9 +50,9 @@ public class ObjectStorageService implements StorageService {
         try (io.minio.GetObjectResponse stream = minioClient.getObject(
                 GetObjectArgs.builder()
                         .bucket(bucketName)
-                        .object(path)
+                        .object(path)   // Okumak istediğimiz dosya adı/path
                         .build())) {
-            return stream.readAllBytes();
+            return stream.readAllBytes();       // Dosyayı byte[] olarak okuyoruz
         } catch (Exception e) {
             throw new RuntimeException("MinIO'dan okuma hatası: " + path, e);
         }
