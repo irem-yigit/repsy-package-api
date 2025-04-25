@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/upload")
@@ -28,36 +26,34 @@ public class FileUploadController {
         this.fileMetadataService = fileMetadataService;
     }
 
+    // Upload file
     @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            // Dosya ismini ve yolu almak
-            String fileName = file.getOriginalFilename();
-            String storagePath = "files/" + fileName;    // Bu path, MinIO için bucket içinde dosya yolunu ifade eder
-            byte[] data = file.getBytes();      // Dosyanın verilerini byte[] olarak alıyoruz
+            String fileName = file.getOriginalFilename();                   // Get file name and path
+            String storagePath = "files/" + fileName;                       // File path in bucket for MinIO
+            byte[] data = file.getBytes();                                  // Get file data as byte[]
 
-            // Dosyayı storage'a kaydetme (MinIO veya lokal dosya sistemi)
-            storageService.save(storagePath, data);
+            storageService.save(storagePath, data);                         // Save file to storage (MinIO or local file system)
 
-            // Checksum hesapla
-            String checksum = fileMetadataService.calculateChecksum(file);
+            String checksum = fileMetadataService.calculateChecksum(file);  // Calculate checksum
 
-            // FileMetadata objesini oluşturup veritabanına kaydetme
+            // Create FileMetadata object and save it to database
             FileMetadata metadata = new FileMetadata(fileName, storagePath, file.getSize(), file.getContentType(), checksum);
             fileMetadataService.saveFileMetadata(file);
-            return ResponseEntity.ok("Dosya başarıyla yüklendi ve metadata kaydedildi: " + fileName);
+            return ResponseEntity.ok("The file was successfully uploaded and metadata was saved: " + fileName);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Dosya yükleme başarısız: " + e.getMessage());
+                    .body("File upload failed: " + e.getMessage());
         } catch (MinioException e) {
             throw new RuntimeException(e);
         }
     }
 
+    // List all File Metadata
     @GetMapping("/all")
     public ResponseEntity<List<FileMetadata>> getAllFiles() {
         return ResponseEntity.ok(fileMetadataService.getAllFileMetadata());
     }
-
 
 }

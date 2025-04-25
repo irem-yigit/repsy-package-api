@@ -14,7 +14,7 @@ public class ObjectStorageService implements StorageService {
     private final MinioClient minioClient;
     private final String bucketName;
 
-    // Constructor üzerinden MinIO'ya bağlanacak bilgileri alıyoruz.
+    // Get the information to connect to MinIO via Constructor
     public ObjectStorageService(
             @Value("${minio.endpoint}") String endpoint,
             @Value("${minio.accessKey}") String accessKey,
@@ -28,33 +28,34 @@ public class ObjectStorageService implements StorageService {
                 .build();
     }
 
+    // Save file to MinIO
     @Override
     public void save(String path, byte[] data) {
         try {
-            // MinIO'ya dosya kaydediyoruz
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(path)       // Dosya adı/path
-                            .stream(new ByteArrayInputStream(data), data.length, -1) // Veriyi byte array olarak aktarıyoruz
-                            .contentType("application/octet-stream")    // İçerik tipi (genellikle binary)
+                            .object(path)
+                            .stream(new ByteArrayInputStream(data), data.length, -1)
+                            .contentType("application/octet-stream")
                             .build()
             );
         } catch (Exception e) {
-            throw new RuntimeException("MinIO'ya kaydetme hatası: " + path, e);
+            throw new RuntimeException("Error saving to MinIO: " + path, e);
         }
     }
 
+    // Read file from MinIO
     @Override
     public byte[] read(String path) {
         try (io.minio.GetObjectResponse stream = minioClient.getObject(
                 GetObjectArgs.builder()
                         .bucket(bucketName)
-                        .object(path)   // Okumak istediğimiz dosya adı/path
+                        .object(path)
                         .build())) {
-            return stream.readAllBytes();       // Dosyayı byte[] olarak okuyoruz
+            return stream.readAllBytes();
         } catch (Exception e) {
-            throw new RuntimeException("MinIO'dan okuma hatası: " + path, e);
+            throw new RuntimeException("Error reading from MinIO: " + path, e);
         }
     }
 }

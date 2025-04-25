@@ -16,11 +16,13 @@ public class StorageStrategyConfig {
     @Value("${storage.file.baseDir}")
     private String fileBaseDir;
 
+    // Provide a FileSystemStorageService object to the Spring container
     @Bean
     public FileSystemStorageService fileSystemStorageService() {
         return new FileSystemStorageService(fileBaseDir);
     }
 
+    // Provide an ObjectStorageService object to the Spring container
     @Bean
     public ObjectStorageService objectStorageService(
             @Value("${minio.endpoint}") String endpoint,
@@ -31,13 +33,15 @@ public class StorageStrategyConfig {
         return new ObjectStorageService(endpoint, accessKey, secretKey, bucketName);
     }
 
+    // Provide a StorageService object to the Spring container
     @Bean
     public StorageService storageService(FileSystemStorageService fileService,
                                          ObjectStorageService objectService) {
         return switch (strategy.toLowerCase()) {
             case "file" -> fileService;
             case "object" -> objectService;
-            default -> throw new IllegalArgumentException("Desteklenmeyen strategy: " + strategy);
+            default -> throw new IllegalArgumentException("Unsupported strategy: " + strategy);
         };
     }
+
 }

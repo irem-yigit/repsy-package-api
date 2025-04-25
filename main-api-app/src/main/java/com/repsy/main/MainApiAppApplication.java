@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 		"com.repsy.main",
 		"com.repsy.storage.filesystem.service",
 		"com.repsy.storage.object"
-})
+}) // Create packages to avoid bean conflicts
 public class MainApiAppApplication {
 
 	public static void main(String[] args) {

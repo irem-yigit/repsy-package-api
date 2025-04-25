@@ -25,7 +25,7 @@ public class FileMetadataService {
     private final FileMetadataRepository repository;
 
     @Value("${storage.file.baseDir}")
-    private String uploadDir; // Dosyaların yükleneceği yerel dizin
+    private String uploadDir;   // Local directory
 
     @Value("${storage.strategy}")
     private String storageStrategy;
@@ -56,33 +56,28 @@ public class FileMetadataService {
                 .build();
     }
 
-    // Dosya yükleme ve metadata kaydetme işlemi
+    // File loading and metadata saving process
     public void saveFileMetadata(MultipartFile file) throws IOException, MinioException {
         String fileName = file.getOriginalFilename();
         long fileSize = file.getSize();
         String fileType = file.getContentType();
         String checksum = calculateChecksum(file);
 
-        // Depolama stratejisini kontrol et
-        if ("local".equals(storageStrategy)) {
-            // Lokal dosya sistemi kullanılıyorsa
+        // Storage strategy control
+        if ("local".equals(storageStrategy)) {                  // If using local file system
             Path path = Paths.get(uploadDir, fileName);
             Files.copy(file.getInputStream(), path);
             FileMetadata fileMetadata = new FileMetadata(fileName, path.toString(), fileSize, fileType, checksum);
             repository.save(fileMetadata);
-        } else if ("object".equals(storageStrategy)) {
-            // MinIO kullanılıyorsa
-            // MinIO'ya yükleme yap
+        } else if ("object".equals(storageStrategy)) {          // If using MinIO
             try (var inputStream = file.getInputStream()) {
-                // PutObjectArgs ile parametreleri ileterek dosya yükleme işlemi
                 PutObjectArgs args = PutObjectArgs.builder()
                         .bucket(minioBucketName)
                         .object(fileName)
-                        .stream(inputStream, fileSize, -1)  // -1 son parametre contentType olmadan
+                        .stream(inputStream, fileSize, -1)
                         .contentType(fileType)
                         .build();
-
-                minioClient.putObject(args); // PutObjectArgs parametresi ile dosyayı yükle
+                minioClient.putObject(args);                    // Load the file with the PutObjectArgs parameter
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             } catch (InvalidKeyException e) {
@@ -94,16 +89,16 @@ public class FileMetadataService {
         }
     }
 
-    // MD5 checksum hesaplama
+    // Calculate MD5 checksum
     public String calculateChecksum(MultipartFile file) throws IOException {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
 
             byte[] fileBytes = file.getBytes();
             if (fileBytes.length == 0) {
-                System.out.println("Dosya boş, checksum hesaplanamıyor!");
+                System.out.println("File is empty, cannot calculate checksum!");
             } else {
-                System.out.println("Dosya boyutu: " + fileBytes.length);
+                System.out.println("File size: " + fileBytes.length);
             }
 
             byte[] hashBytes = digest.digest(fileBytes);
@@ -120,20 +115,23 @@ public class FileMetadataService {
         }
     }
 
+    // List all File Metadata
     public List<FileMetadata> getAllFileMetadata() {
         return repository.findAll();
     }
 
+    // List File Metadata by id
+    public FileMetadata getFileMetadataById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    // Delete File Metadata
     public boolean deleteFileMetadata(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
             return true;
         }
         return false;
-    }
-
-    public FileMetadata getFileMetadataById(Long id) {
-        return repository.findById(id).orElse(null);
     }
 
 }

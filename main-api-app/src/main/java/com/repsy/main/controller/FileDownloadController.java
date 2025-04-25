@@ -27,22 +27,18 @@ public class FileDownloadController {
         this.fileMetadataService = fileMetadataService;
     }
 
-    // Dosya indir
+    // Download file
     @GetMapping("/{id}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("id") Long id) {
         try {
-            // Metadata'yı al
             Optional<FileMetadata> metadataOpt = Optional.ofNullable(fileMetadataService.getFileMetadataById(id));
             if (metadataOpt.isEmpty()) {
                 return ResponseEntity.status(404).body(null);
             }
-
             FileMetadata metadata = metadataOpt.get();
 
-            // Storage servisinden dosyayı al (MinIO, Local vs.)
-            byte[] data = storageService.read(metadata.getStoragePath());
-            // ByteArrayResource ile veriyi döndür
-            ByteArrayResource resource = new ByteArrayResource(data);
+            byte[] data = storageService.read(metadata.getStoragePath());       // Get the file from the Storage service (MinIO, Local)
+            ByteArrayResource resource = new ByteArrayResource(data);           // Return data with ByteArrayResource
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + metadata.getFileName() + "\"")

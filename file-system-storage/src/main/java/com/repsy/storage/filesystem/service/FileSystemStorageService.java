@@ -17,6 +17,7 @@ public class FileSystemStorageService implements StorageService{
         this.baseDir = Paths.get(baseDir).toAbsolutePath().normalize();
     }
 
+    // Save the file to the specified file path
     @Override
     public void save(String path, byte[] data) {
         try {
@@ -24,17 +25,19 @@ public class FileSystemStorageService implements StorageService{
             Files.createDirectories(fullPath.getParent());
             Files.write(fullPath, data);
         } catch (IOException e) {
-            throw new RuntimeException("Dosya kaydedilemedi: " + path, e);
+            throw new RuntimeException("File could not be saved: " + path, e);
         }
     }
 
+    // Read the file at the specified path and return it as a byte array
     @Override
     public byte[] read(String path) {
         try {
             Path fullPath = baseDir.resolve(path).normalize();
             return Files.readAllBytes(fullPath);
         } catch (IOException e) {
-            throw new RuntimeException("Dosya okunamadı: " + path, e);
+            throw new RuntimeException("Could not read file: " + path, e);
         }
     }
+
 }

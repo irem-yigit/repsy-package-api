@@ -21,13 +21,13 @@ public class FileMetadataController {
         this.fileMetadataService = fileMetadataService;
     }
 
-    // Tüm dosyaları getir
+    // Get all file
     @GetMapping
     public List<FileMetadata> getAllFiles() {
         return fileMetadataService.getAllFileMetadata();
     }
 
-    // Belirli ID ile dosya getir
+    // Get file with specific ID
     @GetMapping("/{id}")
     public ResponseEntity<FileMetadata> getFileById(@PathVariable Long id) {
         Optional<FileMetadata> file = Optional.ofNullable(fileMetadataService.getFileMetadataById(id));
@@ -35,11 +35,10 @@ public class FileMetadataController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Yeni dosya kaydet
+    // Save new file
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            // Dosya yükleme ve metadata bilgilerini kaydetme
             fileMetadataService.saveFileMetadata(file);
             return ResponseEntity.ok("File uploaded successfully");
         } catch (IOException | MinioException e) {
@@ -47,12 +46,13 @@ public class FileMetadataController {
         }
     }
 
-    // Silme işlemi
+    // Delete file
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFile(@PathVariable Long id) {
+    public ResponseEntity<String> deleteFile(@PathVariable Long id) {
         if (fileMetadataService.deleteFileMetadata(id)) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(404).body("File deletion failed");
     }
+
 }
