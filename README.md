@@ -6,7 +6,9 @@ This project is a Spring Boot based REST API implementation that provides a mini
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#about-the-project">About the Project</a></li>
+    <li><a href="#features">Features</a></li>
     <li><a href="#technologies">Technologies</a></li>
+   <li><a href="#project-structure">Project Structure</a></li>
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
@@ -29,5 +31,117 @@ Files can be stored with two different strategies:
 * On Object Storage using MinIO
 
 The metadata of each uploaded file is saved in the PostgreSQL database.
+
+## Features
+
+* **Deployment REST API Endpoints:**
+  * URL: `/{packageName}/{version}`: Package deployment endpoint.
+  * Enables the upload of package.rep (binary zip file) and meta.json (package metadata) files.
+  * The uploaded meta.json file is verified and saved to the PostgreSQL database.
+  * Files are saved to MinIO or file system depending on the selected storage strategy.
+* **Download REST Endpoint:**
+  * URL: `/{packageName}/{version}/{fileName}`: Package download endpoint.
+  * Enables the download of uploaded files.
+* **Storage Layer:**
+  * Packages and metadata can be stored in both the file system and in the object store using MinIO.
+  * The storage method can be configured via `application.properties` or an environment variable.
+* **Database:**
+  * PostgreSQL database is used to store metadata of deployed packages.
+* **Docker Support:**
+  * The application is packaged as a Docker container and configured to work with PostgreSQL and MinIO services using docker-compose.
+* **Technical Details:**
+  * Developed using Java LTS version (Java 17) and Spring Boot.
+  * Packaged as a Docker container.
+
+
+## Technologies 
+
+- **Java 17:** Main programming language used for backend logic.
+- **Spring Boot v3.4.4:** Used for rapid development of RESTful services.
+- **Spring Data JPA:** A Spring module that simplifies database operations.
+- **PostgreSQL:** Used as a database management system.
+- **Maven (For PostgreSQL ve MinIO):** Project dependency management and compilation operations.
+- **Docker & Docker Compose:** Used to run the application and MySQL database as a container.
+- **Swagger / Postman:** Testable API
+
+## Project Structure
+
+* **main-api-app/** → Main Spring Boot Application
+
+    - REST API endpoints
+
+   - Business logic and services
+
+* Storage Strategy Libraries
+
+   - **file-system-storage/** → storage-file-system module
+
+   - **object-storage/** → storage-object-storage module
+
+   - These libraries are deployed to the Repsy private Maven repository and are used by the main application.
+
+* Dockerfile and docker-compose.yml
+
+   - Enables all services (application, PostgreSQL, MinIO) to stand up easily.
+
+## Getting Started
+
+### Requirements
+
+To run the project, you must have the following software installed on your system:
+
+- Java 17 or later
+- Maven 3.8 or later
+- Docker and Docker Compose (For PostgreSQL ve MinIO)
+- IntelliJ IDEA or another IDE
+- PostgreSQL or another compatible SQL database
+- Swagger or Postman
+
+### Installation
+
+1. **Clone the project:**
+
+   ```bash
+   git clone https://github.com/irem-yigit/repsy-package-api.git
+   ```
+
+2. **Configure the database:**
+
+    - Create a database named `repsy` (this step is not necessary if running with Docker).
+    - Update the `application.properties` file in the `src/main/resources` folder according to your database information.
+
+3. **Build the project with Maven:**
+
+   ```bash
+   mvn clean install
+   ```
+
+4. **Run the Spring Boot application:**
+
+   ```bash
+   mvn spring-boot:run
+   ```
+
+   Once the application is launched, you can start using the APIs.
+
+5. **Running with Docker:**
+
+   To run the application with Docker, you can use the `docker-compose.yml` file located in the root directory of the project:
+
+   ```bash
+   docker-compose up --build
+   ```
+<p align="right"><a href="#readme-top">Back to the Top ↑ </a></p>
+
+## API Test
+
+**Swagger URL:**
+
+   ```bash
+   http://localhost:8080/swagger-ui/index.html#/v3/api-docs
+   ```
+
+
+
 
 
