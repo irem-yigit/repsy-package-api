@@ -110,13 +110,27 @@ To run the project, you must have the following software installed on your syste
     - Create a database named `repsy` (this step is not necessary if running with Docker).
     - Update the `application.properties` file in the `src/main/resources` folder according to your database information.
 
-3. **Build the project with Maven:**
+3. **Run the following services with Docker:**
+
+   → PostgreSQL
+    ```bash
+    docker run --name repsy-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=repsy -p 5432:5432 -d postgres
+   ```
+   → MinIO
+   ```bash
+    docker run -p 9000:9000 -p 9001:9001 --name repsy-minio \
+      ```
+   - -e "MINIO_ROOT_USER=minio" \
+   - -e "MINIO_ROOT_PASSWORD=minio123" \
+   - quay.io/minio/minio server /data --console-address ":9001"
+
+4. **Build the project with Maven:**
 
    ```bash
    mvn clean install
    ```
 
-4. **Run the Spring Boot application:**
+5. **Run the Spring Boot application:**
 
    ```bash
    mvn spring-boot:run
@@ -124,7 +138,7 @@ To run the project, you must have the following software installed on your syste
 
    Once the application is launched, you can start using the APIs.
 
-5. **Running with Docker:**
+6. **Running with Docker:**
 
    To run the application with Docker, you can use the `docker-compose.yml` file located in the root directory of the project:
 
@@ -140,6 +154,14 @@ To run the project, you must have the following software installed on your syste
    ```bash
    http://localhost:8080/swagger-ui/index.html#/v3/api-docs
    ```
+
+## Important Notes
+
+* If PostgreSQL connection is not available, check the Docker PostgreSQL container.
+
+* You can access the MinIO interface via http://localhost:9001 with minio/minio123.
+
+* If you are running it for the first time, you should create a bucket named repsy on MinIO.
 
 
 
