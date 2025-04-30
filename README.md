@@ -67,6 +67,16 @@ The metadata of each uploaded file is saved in the PostgreSQL database.
 
 ## Project Structure
 
+    📦 repsy-assignment/
+    ├── 📂 file-system-storage # storage-file-system module
+    ├── 📂 main-api-app/ # Main Spring Boot Application
+    ├────├── 📂 storage/
+    ├────────├── 📂 files        
+    ├── 📂 object-storage # storage-object-storage module
+    ├── 📂 storage-common # Common interface
+    ├── 📄 docker-compose.yml # Docker settings
+    └── 📄 README.md # Documentation
+
 * **main-api-app/** → Main Spring Boot Application
 
     - REST API endpoints
@@ -161,7 +171,8 @@ To run the project, you must have the following software installed on your syste
 
 #### Download API
 
-- `GET /download/{filename}`    :
+- `GET /download/{filename}`    : Downloads file by file name 
+- `GET /download/{id}`    : Downloads file by ID
 
 #### Upload API
 
