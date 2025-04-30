@@ -71,7 +71,7 @@ The metadata of each uploaded file is saved in the PostgreSQL database.
     ├── 📂 file-system-storage # storage-file-system module
     ├── 📂 main-api-app/ # Main Spring Boot Application
     ├────├── 📂 storage/
-    ├────────├── 📂 files        
+    ├────────├── 📂 files # Storage files      
     ├── 📂 object-storage # storage-object-storage module
     ├── 📂 storage-common # Common interface
     ├── 📄 docker-compose.yml # Docker settings
