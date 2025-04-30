@@ -18,6 +18,7 @@ This project is a Spring Boot based REST API implementation that provides a mini
     </li>
     <li><a href="#api-test">API Test</a></li>
     <li><a href="#api-endpoints">API Endpoints</a></li>
+    <li><a href="#important-notes">Important Notes</a></li>
   </ol>
 </details>
 
@@ -154,6 +155,22 @@ To run the project, you must have the following software installed on your syste
    ```bash
    http://localhost:8080/swagger-ui/index.html#/v3/api-docs
    ```
+## API Endpoints
+
+### The Repsy Package API offers the following endpoints:
+
+#### Download API
+
+- `GET /download/{filename}`    :
+
+#### Upload API
+
+- `POST /upload`           : 
+- `GET /upload/all`        :
+
+#### Deploy API 
+
+- `POST /{packageName}/{version}` : 
 
 ## Important Notes
 
@@ -162,8 +179,3 @@ To run the project, you must have the following software installed on your syste
 * You can access the MinIO interface via http://localhost:9001 with minio/minio123.
 
 * If you are running it for the first time, you should create a bucket named repsy on MinIO.
-
-
-
-
-
