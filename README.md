@@ -77,17 +77,17 @@ The metadata of each uploaded file is saved in the PostgreSQL database.
     ├── 📄 docker-compose.yml # Docker settings
     └── 📄 README.md # Documentation
 
-* **main-api-app/** → Main Spring Boot Application
+* Main Spring Boot Application → **main-api-app/** 
 
-    - REST API endpoints
+   - REST API endpoints
 
    - Business logic and services
 
 * Storage Strategy Libraries
 
-   - **file-system-storage/** → storage-file-system module
+   - storage-file-system module → **file-system-storage/** 
 
-   - **object-storage/** → storage-object-storage module
+   - storage-object-storage module → **object-storage/** 
 
    - These libraries are deployed to the Repsy private Maven repository and are used by the main application.
 
