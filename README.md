@@ -181,7 +181,7 @@ To run the project, you must have the following software installed on your syste
 
 #### Deploy API 
 
-- `POST /{packageName}/{version}` : 
+- `POST /{packageName}/{version}` :
 
 ## Important Notes
 
