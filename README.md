@@ -176,12 +176,15 @@ To run the project, you must have the following software installed on your syste
 
 #### Upload API
 
-- `POST /upload`           : 
-- `GET /upload/all`        :
+- `POST /upload`           : Upload file
+- `GET /upload/all`        : List all File Metadata
 
 #### Deploy API 
 
 - `POST /{packageName}/{version}` : 
+
+#### Metadata File API 
+
 
 ## Important Notes
 
