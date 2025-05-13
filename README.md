@@ -167,12 +167,12 @@ To run the project, you must have the following software installed on your syste
    ```
 ## API Endpoints
 
-### The Repsy Package API offers the following endpoints:
+### Repsy Package API offers the following endpoints:
 
 #### Download API
 
 - `GET /download/{filename}`    : Downloads file by file name 
-- `GET /download/{id}`    : Downloads file by ID
+- `GET /download/{id}`          : Downloads file by ID
 
 #### Upload API
 
@@ -181,10 +181,14 @@ To run the project, you must have the following software installed on your syste
 
 #### Deploy API 
 
-- `POST /{packageName}/{version}` :
+- `POST /{packageName}/{version}` : Deploy file with package name and version
 
 #### Metadata File API 
 
+- `GET /files`          : Get all metadata files
+- `GET /files/{id}`     : Get file with specific ID
+- `POST /files/upload`  : Save new file
+- `DELETE /files/{id}`  : Delete file
 
 ## Important Notes
 
